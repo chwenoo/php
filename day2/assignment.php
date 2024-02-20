@@ -53,6 +53,27 @@ echo check_equal([1, 2, 3, 4, 5, 6], 6); echo "<br/>";
 echo check_equal([1, 2, 2, 3], 9); echo "<br/>";
 
 // 4
+function compare($str1, $str2) {
+    $count = 0;
+
+    for ($x = 0; $x < strlen($str1) - 1; $x++) {
+        $subStringX = substr($str1, $x, 2);
+        // echo "sub: ".$subStringX; echo "<br/>";
+
+        for ($y = 0; $y < strlen($str2) - 1; $y++) {
+            $subStringY = substr($str2, $y, 2);
+            // echo "sub: ".$subStringY; echo "<br/>";
+            if ($subStringX === $subStringY) {
+                $count++;
+            }
+        }
+    }
+    return $count;
+}
+
+echo compare("abcdefgh", "abijsklm"); echo "<br />";
+echo compare("abcde", "osuefrcd"); echo "<br />";
+echo compare("pqrstuvwx", "pqkdiewx"); echo "<br />";
 
 // 5
 function sum($a, $b, $c) {
