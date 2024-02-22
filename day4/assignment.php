@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $confirmPassword = $_POST["confirm-password"];
     }
 
-    if (empty($nameErr && $emailErr && $genderErr && $websiteErr && $commentErr && $passwordErr) && $confirmPasswordErr) {
+    if (empty($nameErr) && empty($emailErr) && empty($genderErr) && empty($websiteErr) && empty($commentErr) && empty($passwordErr) && empty($confirmPasswordErr)) {
         $formSubmitted = true;
     }
 }
@@ -88,13 +88,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
 </head>
 <body>
-    
     <?php if ($formSubmitted) { ?>
-        <alert class="alert alert-info d-block">login user : <?= $name ?></alert>
+        <alert class="alert alert-info d-block rounded-0 border-0">login user : <?= $name ?></alert>
     <?php } ?>
 
     <div class="container my-4" style="max-width: 576px">
         <h1 class="text-center mb-2 text-primary" >PHP Form Validation Example</h1>
+
 
         <form action="<?= "assignment.php"  ?>" method="post" class="form" >
 
@@ -140,5 +140,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="submit" name="submit" value="Submit" class="btn btn-primary mt-3 w-100">
         </form>
     </div>
+
+    <div class="container">
+        <h3 class="mt-5 mb-4 text-primary text-center">Register Users List</h3>
+        <?php    
+            $list = [];
+    
+            if ($formSubmitted) {
+                $myfile = fopen('registerUsersList.txt', 'a') or die("Unable to open file");
+                $user = [$name, $email, $gender, $website, $comment];
+    
+                foreach ($user as $data) {
+                    fwrite($myfile, $data);
+                    fwrite($myfile, "\n");
+                }
+                fclose($myfile);
+                
+                $readfile = fopen('registerUsersList.txt', 'r') or die("Unable to open file");
+                $currentUser = [];
+    
+                while (!feof($readfile)) {
+                    // Add key-value pair to the current user data
+                    $currentUser["name"] = fgets($readfile);
+                    $currentUser["email"] = fgets($readfile);
+                    $currentUser["gender"] = fgets($readfile);
+                    $currentUser["website"] = fgets($readfile);
+                    $currentUser["comment"] = fgets($readfile);
+    
+                    // Add the current user to the array of list
+                    $list[] = $currentUser;
+    
+                    // Reset current user data for the next user
+                    $currentUser = [];
+                }
+    
+                
+                fclose($readfile);
+            }
+            // print_r($list);
+        ?>
+    
+        <table class="table table-striped table-primary">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Gender</th>
+                    <th>Website</th>
+                    <th>Comment</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <?php foreach ($list as $user) {?>
+                        <tr>
+                            <td><?= $user["name"]?></td>
+                            <td><?= $user["email"]?></td>
+                            <td><?= $user["gender"]?></td>
+                            <td><?= $user["website"]?></td>
+                            <td><?= $user["comment"]?></td>
+                        </tr>
+                    <?php }?>
+            </tbody>
+        </table>
+    </div>
+    
 </body>
 </html>
