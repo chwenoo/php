@@ -45,67 +45,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $website = testInput($_POST["website"]);
         // check if url address syntax is valid (this regular expression also allows dashes in the URL)
         if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $website)) {
-              $websiteErr = "Invalid URL";
+            $websiteErr = "Invalid URL";
         }
     }
 
-    
-    // Checkif image file is an actual image or fake image
     if (isset($_POST["submit"])) {
-        
-        if (empty($_FILES['fileToUpload'])) {
+
+        if ($_FILES["fileToUpload"]["size"] === 0) {
             $imgErr = "* Image file is required";
         } else {
-
             $target_dir = "uploads/";
             $target_file = $target_dir. basename($_FILES["fileToUpload"]["name"]);
             $uploadOk = 1;
             $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
-            if (empty($target_file)) {
-                $imgErr = "* Image file is required";
-            }
-    
             $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
             // print_r($check);
             if($check !== false) {
                 // echo "File is an image - ". $check["mime"]. ".";
                 $uploadOk = 1;
             } else {
-                echo "File is not an image.";
+                // echo "File is not an image.";
                 $uploadOk = 0;
             }
-    
+
             // Check if file already exists
             if (file_exists($target_file)) {
-                $imgErr = "Sorry, file already exists.";
-                $uploadOk = 0;
+                // echo "Sorry, file already exists.";
+                $uploadOk = -1;
             }
-    
+
             // Check file size
             if ($_FILES["fileToUpload"]["size"] > 500000) {
-                $imgErr = "Sorry, your file is too large.";
-                $uploadOk = 0;
+                // echo "Sorry, your file is too large.";
+                $uploadOk = -2;
             }
-    
+
             // Allow certain file formats
             if($imageFileType!= "jpg" && $imageFileType!= "png" && $imageFileType!= "jpeg"
             && $imageFileType!= "gif" ) {
-                $imgErr = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-                $uploadOk = 0;
+                // echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                $uploadOk = -3;
             }
-    
+
             // Check if $uploadOk is set to 0 by an error
             if ($uploadOk == 0) {
-                $imgErr = "Sorry, your file is too large.";
-            // if everything is ok, try to upload file
+                $imgErr = "* Sorry, File is not an image and your file was not uploaded.";
+            } elseif ($uploadOk === -1) {
+                $imgErr = "* Sorry, File already exists!";
+            } elseif ($uploadOk === -2) {
+                $imgErr = "* Sorry, Your file is too large!";
+            } elseif ($uploadOk === -3) {
+                $imgErr = "* Sorry, Only JPG, JPEG, PNG & GIF files are allowed!";
             } else {
+            // if everything is ok, try to upload file
+
                 if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
                     $img = $target_file;
                 } else {
                     $imgErr = "Sorry, there was an error uploading your file.";
                 }
-            } 
+            }
         }
     }
 
@@ -135,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($nameErr) && empty($emailErr) && empty($imgErr) && empty($genderErr) && empty($websiteErr) && empty($commentErr) && empty($passwordErr) && empty($confirmPasswordErr)) {
         $formSubmitted = true;
     }
-}
+} 
 
 ?>
 
@@ -239,6 +239,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
                     // // Reset current user data for the next user
                     // $currentUser = [];
+
                     if(!empty($currentUser['name'])) {
                         $list[] = $currentUser;
                     }
@@ -272,7 +273,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <?php }?>
             </tbody>
         </table>
-    </div>
-    
+    </div>   
 </body>
 </html>
