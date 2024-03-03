@@ -89,21 +89,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // Check if $uploadOk is set to 0 by an error
-            if ($uploadOk == 0) {
-                $imgErr = "* Sorry, File is not an image and your file was not uploaded.";
-            } elseif ($uploadOk === -1) {
-                $imgErr = "* Sorry, File already exists!";
-            } elseif ($uploadOk === -2) {
-                $imgErr = "* Sorry, Your file is too large!";
-            } elseif ($uploadOk === -3) {
-                $imgErr = "* Sorry, Only JPG, JPEG, PNG & GIF files are allowed!";
-            } else {
-            // if everything is ok, try to upload file
+            switch ($uploadOk) {
+                case 0 : $imgErr = "* Sorry, File is not an image and your file was not uploaded."; break;
+                case -1 : $imgErr = "* Sorry, File already exists!"; break;
+                case -2 : $imgErr = "* Sorry, Your file is too large!"; break;
+                case -3 : $imgErr = "* Sorry, Only JPG, JPEG, PNG & GIF files are allowed!"; break;
+                // if everything is ok, try to upload file
+                default : {
 
-                if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-                    $img = $target_file;
-                } else {
-                    $imgErr = "Sorry, there was an error uploading your file.";
+                    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+                        $img = $target_file;
+                    } else {
+                        $imgErr = "Sorry, there was an error uploading your file.";
+                    }
                 }
             }
         }
